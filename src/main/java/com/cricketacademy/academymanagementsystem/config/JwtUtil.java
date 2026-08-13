@@ -3,6 +3,7 @@ package com.cricketacademy.academymanagementsystem.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,12 +13,13 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // In production this comes from an environment variable / AWS Secrets Manager — never hardcoded
-    private static final String SECRET_KEY = "ThisIsASecretKeyForJWTThatMustBeAtLeast256BitsLong123456";
-    private static final long EXPIRATION_MS = 1000 * 60 * 60 * 10; // 10 hours
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    private static final long EXPIRATION_MS = 1000 * 60 * 60 * 10;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String generateToken(String username, String role) {
